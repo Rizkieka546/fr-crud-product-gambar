@@ -1,17 +1,20 @@
 export interface Product {
-    _id?: string;
-    name: string;
-    description: string;
-    price: number;
-    stock: number;
-    image?: string;
-    createdAt?: string;
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface ProductFormData {
-    name: string;
-    description: string;
-    price: number;
-    stock: number;
-    image?: File | null;
+export interface CreateProductData {
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  image?: File;
 }
+
+export interface UpdateProductData extends CreateProductData {}

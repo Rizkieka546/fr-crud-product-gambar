@@ -1,91 +1,67 @@
-import { Product, ProductFormData } from "@/types/product";
-import axios from "axios";
+import axios from 'axios';
+import { Product, CreateProductData, UpdateProductData } from '@/types/product';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+  baseURL: API_BASE_URL,
 });
 
 export const productService = {
-    async getProducts(): Promise<Product[]> {
-        try {
-            const response = await api.get('/products');
-            return response.data.data;
-        } catch (error) {
-            console.error('Error fetching products: ', error);
-            throw error;
-        }
-    },
+  // Get all products
+  getProducts: async (): Promise<Product[]> => {
+    const response = await api.get('/products');
+    return response.data.data;
+  },
 
-    async getProductById(_id: string): Promise<Product> {
-        try {
-            const response = await api.get(`/products/${_id}`);
-            return response.data.data;
-        } catch (error) {
-            console.error('Error to get data product: ', error);
-            throw error;
-        }
-    },
+  // Get single product
+  getProduct: async (id: string): Promise<Product> => {
+    const response = await api.get(`/products/${id}`);
+    return response.data.data;
+  },
 
-    async createProduct(formData: ProductFormData): Promise<Product> {
-        try {
-            const data = new FormData();
-            data.append('name', formData.name);
-            data.append('description', formData.description);
-            data.append('price', formData.price.toString());
-            data.append('stock', formData.stock.toString());
-
-            if (formData.image) {
-                data.append('image', formData.image);
-            }
-
-            const response = await api.post('/products', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            return response.data.data
-        } catch (error) {
-            console.error('Error creating product: ', error);
-            throw error;
-        }
-    },
-
-    async updateProduct(_id: string, formData: ProductFormData): Promise<Product> {
-        try {
-            const data = new FormData();
-
-            data.append('name', formData.name);
-            data.append('description', formData.description);
-            data.append('price', formData.price.toString());
-            data.append('stock', formData.stock.toString());
-
-            if (formData.image) {
-                data.append('image', formData.image);
-            }
-
-            const response = await api.put(`/products/${_id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            return response.data.data
-        } catch (error) {
-            console.error('Error updating product: ', error);
-            throw error;
-        }
-    },
-
-    async deleteProduct(_id: string): Promise<void> {
-        try {
-            await api.delete(`/products/${_id}`);
-        } catch (error) {
-            console.error('Error deleting product: ', error);
-            throw error;
-        }
+  // Create product
+  createProduct: async (productData: CreateProductData): Promise<Product> => {
+    const formData = new FormData();
+    formData.append('name', productData.name);
+    formData.append('description', productData.description);
+    formData.append('price', productData.price.toString());
+    formData.append('stock', productData.stock.toString());
+    
+    if (productData.image) {
+      formData.append('image', productData.image);
     }
-}
+
+    const response = await api.post('/products', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  },
+
+  // Update product
+  updateProduct: async (id: string, productData: UpdateProductData): Promise<Product> => {
+    const formData = new FormData();
+    formData.append('name', productData.name);
+    formData.append('description', productData.description);
+    formData.append('price', productData.price.toString());
+    formData.append('stock', productData.stock.toString());
+    
+    if (productData.image) {
+      formData.append('image', productData.image);
+    }
+
+    const response = await api.put(`/products/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  },
+
+  // Delete product
+  deleteProduct: async (id: string): Promise<void> => {
+    await api.delete(`/products/${id}`);
+  },
+};
